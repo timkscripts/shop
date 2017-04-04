@@ -1,0 +1,90 @@
+<html>
+<style>
+  #page {
+    margin: auto;
+    width: 90%;
+    position: relative;
+    background: gray;
+    border: 3px solid #dddddd;
+    height: 90%;
+
+  }
+  #login {
+    margin: auto;
+    width: 40%;
+    position: relative;
+    top: 20%;
+  }
+body {
+    margin:0;
+}
+
+.header {
+    height: 100px;
+    background-color: black;
+}
+
+.mainBody {
+    background-color: white;
+    position: absolute;
+    top: 100px;
+    bottom: 20px;
+    width:100%;
+    
+}
+
+.content {
+    color:#fff;
+}
+
+.footer {
+    height: 20px;
+    background-color: gray;
+    
+    position: absolute;
+    bottom: 0;
+    width:100%;
+}
+</style>
+  <head>
+    <!-- load Angular into our HTML Page -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <!-- load our Angular App in -->
+    <script src="/public/app/app.js"></script>
+    <script src="/bower_components/angular-animate/angular-animate.js"></script>
+  </head>
+  <!-- 
+                                                                              game app 
+  -->
+  <body ng-app="gameApp"  >
+
+  <div class="header" >
+      &nbsp;
+  </div>
+  <div class="mainBody">
+      &nbsp;
+      <div id="page">
+          <div id="login" ng-controller="loginController">
+            <h1>Login</h1>
+            <h2>Usernameasdfads:</h2>
+            <input>
+            <button go-click="/index2">Click me!</button>
+          </div>
+        
+      </div>
+  </div>
+  <div class="footer">
+      &nbsp;
+  </div>
+
+  <!-- 
+   <div class="displayScreen">
+    <div id="displayDiv" ng-controller="displayController"  >
+      
+    </div>
+   </div>
+   -->
+ 
+  
+  </body>
+</html>

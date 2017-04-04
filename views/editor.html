@@ -1,0 +1,185 @@
+<html>
+<style>
+ #page {
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  display: table;
+  height: auto;
+  width: 100%;
+  position: relative;
+ }
+ .testDiv{
+  height: 400px;
+ }
+table {
+  width: 50%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  empty-cells: show; 
+}
+.displayTD {
+  width: 33.33%;
+  position: relative;
+}
+.displayTD:after {
+  content: '';
+  display: block;
+  margin-top: 100%;
+}
+.displayTD .content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: gold;
+}
+.displayScreen {
+  width: 100%;
+  height: auto;
+  display:table-cell;
+  float:none;
+  vertical-align:middle;
+}
+</style>
+  <head>
+    <!-- load Angular into our HTML Page -->
+    <script src="/bower_components/angular/angular.js"></script>
+    <!-- load our Angular App in -->
+    <script src="/public/app/appEditor.js"></script>
+    <script src="/bower_components/angular-animate/angular-animate.js"></script>
+  </head>
+  <!-- 
+                                                                              game app 
+  -->
+  <body ng-app="gameApp"  >
+  <div id="page">
+   <div class="displayScreen">
+    <div id="displayDiv" ng-controller="displayController"  >
+      <table class="displayTable">
+          <tbody>
+            <tr class="displayTR" ng-repeat="pixel in Screen">
+              <!-- 
+              For every pixel in our display, change its style based on our array of colors and its value in the screen array 
+              -->
+               <td ng-click="color.value = 3;" class="displayTD" ng-repeat="color in Screen[$index] track by color.key"> <div class="content" ng-style="{'background-color': backgroundArray[color.value] }">&nbsp;</div>  </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div>
+            <button ng-click="resizeScreen('sHeight', 'sWidth');">Set</button>
+            Sprite Height: <input type="text" name="sH" id="sHeight" value="3" ><br>
+            Sprite Width: <input type="text" name="sW" id="sWidth" value="3" ><br>
+            
+       </div>
+       <div><!-- color -->
+         <table>
+          <tbody>
+            <tr>
+               <td> <div>Red</div>  </td>
+               <td> <div>Blue</div>  </td>
+               <td> <div>Green</div>  </td>
+               <td> <div ng-style="{'background-color': 'rgb(' + eRed + ',' + eGreen + ',' + eGreen +')'}">color</div>  </td>
+            </tr>
+            <tr>
+               <td> <div> <button ng-click="eRed = eRed + 1;">Up</button> </div>  </td>
+               <td> <div> <button ng-click="eBlue = eBlue + 1;">Up</button> </div>  </td>
+               <td> <div> <button ng-click="eGreen = eGreen + 1;">Up</button> </div>  </td>
+            </tr>
+            <tr>
+               <td> <div> <button ng-click="eRed = eRed - 1;">Down</button> </div>  </td>
+               <td> <div> <button ng-click="eBlue = eBlue - 1;">Down</button> </div>  </td>
+               <td> <div> <button ng-click="eGreen = eGreen - 1;">Down</button> </div>  </td>
+            </tr>
+
+            <tr>
+               <td> <div><input type="text" name="fname" id="eRedI"  ng-model="eRedM" ng-change="alert(&quot;hey&quot;)"> {{eRed}}</div>  </td>
+               <td> <div>{{eBlue}}</div>  </td>
+               <td> <div>{{eGreen}}</div>  </td>
+            </tr>
+            <tr>
+            </tr>
+          </tbody>
+        </table>
+       </div>
+      </div>
+   </div>
+  </div>
+    <!-- game controller -->
+         <div ng-controller="gameController" class="gameCont">
+         <div>  
+            Your Current Score:
+            {{ score }}
+            <br>
+            
+            <br>
+            Game Controller [Click load snake to start. Controls to move are W,A,S,D]
+            <br>
+            Click anywhere in the blue area to allow the game to take your input
+            <br>
+            <div class="gameover" ng-if="gameState == 4">
+              Game Over! Load Again!
+            </div>
+            <button  ng-click="document.getElementById('giveFocus').focus();loadSnake();" >
+              load Snake
+            </button>
+
+            <div>
+                <button ng-click="stop()">Pause</button>   
+                <button ng-click="resume()">Resume</button>  
+                <button ng-if="gameState == 4" ng-click="highScore()">highscore add</button>  
+            </div>
+         </div>
+      </div>
+      <!-- end game controller-->
+        <!-- input controller -->
+      <div id="inputDiv" ng-controller="inputController"  >
+        <div id="giveFocus" class="inputRead" tabindex="0" ng-keyup=" keyUp();detectInput( $event );" ng-keydown="keyDown( $event );" ng-keypress="keyPress();" >
+        Click anywhere in the blue area to allow the game to take your input!
+          <table class="inputDisplay">
+          <tbody>
+            <tr>
+              <td>KeyCode</td>
+              <td>{{ event.keyCode }}</td>
+            </tr>
+            <tr>
+              <td>AltKey?</td>
+              <td>{{ event.altKey }}</td>
+            </tr>
+            <tr>
+              <td>KeyDown</td>
+              <td>{{ isKeyDown }}</td>
+            </tr>
+            <tr>
+              <td>KeyUp</td>
+              <td>{{ isKeyUp }}</td>
+            </tr>
+            <tr>
+              <td>KeyPress</td>
+              <td>{{ isKeyPress }}</td>
+            </tr>
+           
+          </tbody>
+        </table>
+        <table class="keyPressDisplay">
+        <tbody>
+            <tr>
+              <td> </td>
+              <td>W</td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td>A</td>
+              <td>S</td>
+              <td>D</td>
+            </tr>
+          </tbody>
+        </table>
+      
+        </div>
+      </div>
+      <!-- End Input Controller-->
+  </body>
+</html>
