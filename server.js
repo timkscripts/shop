@@ -41,6 +41,12 @@ app.get('/shop.html', function(req, res) {
   //res.send('Hello World!');
   return res.render('shop.html');
 });
+
+// GET editor.html route
+app.get('/maps', function(req, res) {
+  //res.send('Hello World!');
+  return res.render('maps');
+});
 // json
 var fs = require('fs');
 
@@ -141,3 +147,32 @@ function setUCart(req, res) {
 
   // register route URL
   app.post('/cart', setUCart);
+
+
+
+/*
+                                                             user history
+        -------------------------------------------------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------------------------------------------------
+*/
+function setUHistory(req, res) {
+
+    console.log(req.body);
+    // write to the json our value
+    fs.writeFile(__dirname+"/public/app/userHistory.json", JSON.stringify(req.body), function(err) {
+     console.log("yeserr");
+     console.log(err);
+    }); 
+      
+    // respond JSON object
+    var _respond = {
+        'status': 200
+    };
+
+    // expressjs respond a JSON with status code 200
+    res.status(200).json(_respond);
+
+}
+
+  // register route URL
+  app.post('/uhistory', setUHistory);

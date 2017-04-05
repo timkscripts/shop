@@ -186,11 +186,9 @@ body {
       <div id="page">
          
            <!--items -->
-
-
-
             <div ng-controller="setItemInfoController">
             <div class="userCartClass blueFont" ng-click="showShop()">Current Items in your cart : {{ qty }}</div>
+            <div class="userCartClass blueFont" ng-click="viewHistory()">View History</div>
             <div ng-if="location == 0"> <!-- display main shop page -->
              <table class="FilterTable">
               <tbody>
@@ -225,7 +223,7 @@ body {
 
                        <td class="itemImage" ng-if="x.imageURL" ng-style="{'background-image':'url('+x.imageURL+')' , 'width':itemWidth , 'height':itemHeight}" ng-mouseenter="itemHeight='200px';itemWidth='200px'" ng-mouseleave="itemHeight='100px';itemWidth='100px'">&nbsp;</td>
                        <td class="itemImage" ng-if="! x.imageURL" >&nbsp; 1</td>
-                       <td class="blueFont" ng-click="showItem(x.Name)"> {{ x.Name }} </td>
+                       <td class="blueFont" ng-click="showItem(x.Name, 0)"> {{ x.Name }} </td>
                        <td class="whiteFont"> {{ x.Description }} </td>
                        <td class="whiteFont"> {{ x.Category }} </td>
                        <td class="whiteFont"> {{ x.CurrentStock }}  /  {{ x.MaxStock }} </td>
@@ -272,7 +270,8 @@ body {
                      <br><br>
                     <button ng-click="goBack()" >Go Back</button>  
                   </div>
-                </div> <!-- if location == 2 -->
+                </div> 
+                <!-- if location == 2 -->
                  <div ng-if="location == 2"> <!-- display item page -->
                   <table class="displayTable">
                     <tbody>
@@ -307,7 +306,34 @@ body {
                      <br><br>
                     <button ng-click="goBack()" >Go Back</button>  
                   </div>
-                </div> <!-- if location == 2 -->
+                </div> 
+                <!-- if location == 2 -->
+                 <!-- if location == 3 -->
+                 <div ng-if="location == 3"> <!-- display item page -->
+                  <table class="displayTable">
+                    <tbody>
+                      <tr>
+                          <td class="blackFont">&nbsp; </td>
+                          <td class="blackFont">Name </td>
+                          <td class="blackFont">Date Viewed </td>
+
+                         
+                        
+                      </tr>
+                      <tr ng-repeat="z in uHistory" class="trScore" >
+                        <td class="blackFont"> &nbsp; </td>
+                        <td ng-click="showItem(uHistory[$index].itemname, 0)" class="blueFont">{{uHistory[$index].itemname}}</td>
+                        <td >{{uHistory[$index].time}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table> <!-- end table -->
+                  <div>
+                     <br><br>
+                    <button ng-click="goBack()" >Go Back</button>  
+                  </div>
+                </div> 
+                <!-- if location == 2 -->
               </div>
               <!-- items -->
           

@@ -31,7 +31,7 @@ appGame.factory('globalVars', function(){
         itemData: [],	//All json data related to all items
         userCart: [],	//whats in your cart?
         cartQty: 0,    	    // how many are in your cart
-        dummy: []
+        userHistory: []
     };
 
 
@@ -85,13 +85,16 @@ appGame.factory('globalVars', function(){
             data.userCart = userCart;
         },
         getCartQty: function () {
-        	//alert(data.cartQty);
             return data.cartQty;
         },
         setCartQty: function (CartQtys) {
-        	
             data.cartQty = CartQtys;
-            
+        }, 
+        getUserHistory: function () {
+            return data.userHistory;
+        },
+        setUserHistory: function (userHistory) {
+            data.userHistory = userHistory;
         }
     };
 
@@ -216,7 +219,10 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 		$scope.qty = globalVars.getCartQty();
 		//when we show the user their cart
 		$scope.currentCart = globalVars.getUserCart();
+		// get current user
 		$scope.currentUser = globalVars.getUserData();
+		//store user history
+		$scope.uHistory = globalVars.getUserHistory();
 		// itemWidth is the size of the image on default. When the user mouse overs, it increases
 		$scope.itemWidth = '100px';
 		// itemHeight is the size of the image on default, when the user mouse overs it increases
@@ -229,7 +235,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 		$scope.cleanColor = 'white';
 		$scope.electronicColor = 'white';
 		$scope.kitchenColor = 'white';
-		// we determine what the user is viewing here, main page = 0, item page = 1
+		// we determine what the user is viewing here, main page = 0, item page = 1, 2 is cart page, 3 is history
 		$scope.location = 0;
 		// when we view an items page we need to know what item we are viewing
 		$scope.currItem = "";
@@ -340,6 +346,10 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 			$scope.location = 2; // shop page
 			$scope.currentCart = globalVars.getUserCart();
 			$scope.currentUser = globalVars.getUserData();
+			$scope.data = globalVars.getUserCart();
+					//alert($scope.data);
+					// set up our items in the cart
+					$scope.items = $scope.data ;
 		}
 		// We need to check when our filter is active what are we filtering by
         $scope.hasValue = function(obj, key, value, i) {
@@ -357,9 +367,52 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 		    return false;
 		}
 		// when the user clicks an item, we show the item details here
-		$scope.showItem = function(item){
+		$scope.showItem = function(item, trackHistory){ //if trackHistory is 0, track it
 			$scope.location = 1; // item page
 			$scope.currItem = item; // our current item view
+
+			if (trackHistory == 0){
+				$scope.userHistory = globalVars.getUserHistory();
+				$scope.items = $scope.userHistory;
+				// if there is no user history then...
+				if ($scope.items.length < 1){
+					
+					$scope.items = [];
+				}
+				var today = new Date();
+				var dd = today.getDate();
+				var mm = today.getMonth()+1; //January is 0!
+				var yyyy = today.getFullYear();
+
+				if(dd<10) {
+				    dd='0'+dd
+				} 
+
+				if(mm<10) {
+				    mm='0'+mm
+				} 
+
+				today = mm+'/'+dd+'/'+yyyy;
+				// push the user name and where they navigated
+				$scope.items.push({
+							uname:$scope.currentUser,
+			        		itemname:item,
+			        		time:today
+			    });
+				
+				// update our local history
+				globalVars.setUserHistory($scope.items);
+
+				// turns out angular populates hashkey values into the arrays. so we erase those
+			    var data = angular.toJson($scope.items);
+			    // We post the data to the json
+				$http({
+			    	url: '/uhistory',
+			    	method: "POST",
+			    	data: data, 
+			    	header: { 'Content-Type': 'application/json' }
+				});
+			}
 		}
 		// when the user clicks to go back on the item page
 		$scope.goBack = function(item){
@@ -453,7 +506,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 		}
 
 		// this is how we got our item json data
-	    $http.get('/public/app/item.json').
+	    $http.get('/public/app/item.json').//retrieve items
 	        then(function(response) {
 	        	//grab the response data
 	            $scope.itemData = response.data.Items;
@@ -462,6 +515,20 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 	            
 	        });
 
+	        // this is how we got our item json data
+	    $http.get('/public/app/userHistory.json').//retrieve user history
+	        then(function(response) {
+	        	//grab the response data
+	            $scope.historyData = response.data;
+	            //set ur user information
+	            globalVars.setUserHistory($scope.historyData);
+	            
+	        });
+	        $scope.viewHistory = function(){
+	        	$scope.uHistory = globalVars.getUserHistory();
+	        	$scope.location = 3;
+
+	        }
 
 
 	           globalVars.setCartQty($scope.qty);
@@ -522,7 +589,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 				} //$window
 
 				$scope.setDelivery = function(type, index){
-					
+
 					$scope.currentCart[index].delivery = type;
 				}
 					           //$scope.qty = globalVars.getCartQty();
