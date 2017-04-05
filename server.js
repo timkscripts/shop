@@ -68,9 +68,39 @@ function something(req, res) {
     console.log(req.body);
     // write to the json our value
     fs.writeFile(__dirname+"../public/app/restfuls.json", JSON.stringify(req.body), function(err) {
-	   
+      console.log("yeserr");
+	   console.log(err);
 	}); 
-	
+	console.log("yes2");
+    // respond JSON object
+    var _respond = {
+        'status': 200
+    };
+console.log("yes3");
+    // expressjs respond a JSON with status code 200
+    res.status(200).json(_respond);
+    console.log("yes4");
+}
+
+// register route URL
+app.post('/', something);
+
+
+
+/*
+                                                            Post user data
+        -------------------------------------------------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------------------------------------------------
+*/
+function setUser(req, res) {
+    console.log("yes");
+    console.log(req.body);
+    // write to the json our value
+    fs.writeFile(__dirname+"/public/app/user.json", JSON.stringify(req.body), function(err) {
+     console.log("yeserr");
+     console.log(err);
+    }); 
+      
     // respond JSON object
     var _respond = {
         'status': 200
@@ -78,9 +108,10 @@ function something(req, res) {
 
     // expressjs respond a JSON with status code 200
     res.status(200).json(_respond);
+    console.log("yes2");
 }
 
 // register route URL
-app.post('/', something);
+app.post('/user', setUser);
 
 

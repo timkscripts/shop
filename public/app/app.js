@@ -25,7 +25,10 @@ appGame.factory('globalVars', function(){
         screen: [],			//this is a 2D array of our screen pixel values
         gameState: 0,		//this variable determines where we are in any game
         userInput: 0,		//this is the keycode detected from the user
-        leaderBoard: []		//this is an object of .name and .score
+        leaderBoard: [],		//this is an object of .name and .score
+        /* delete before this */
+        userData: [],
+        itemData: []
     };
 
 
@@ -59,6 +62,18 @@ appGame.factory('globalVars', function(){
         },
         setLeaderBoard: function (leaderBoard) {
             data.leaderBoard = leaderBoard;
+        },
+        getUserData: function () {
+            return data.userData;
+        },
+        setUserData: function (userData) {
+            data.userData = userData;
+        },
+        getItemData: function () {
+            return data.itemData;
+        },
+        setItemData: function (itemData) {
+            data.itemData = itemData;
         }
     };
 
@@ -69,13 +84,242 @@ appGame.factory('globalVars', function(){
 				-------------------------------------------------------------------------------------------------------------------------------------
 				-------------------------------------------------------------------------------------------------------------------------------------
 */
-appGame.controller('loginController', function($scope, $http, globalVars, $window) {
+appGame.controller('loginController', function($scope, $http, globalVars, $window, $http) {
     $scope.login = function(){
-			$window.location.href = '/shop.html';
+    			    // grab the user data
+					//$scope.data = globalVars.getUserData();
+					// create something to store username
+					$scope.user = [] ;
+					// push the username to our user data
+					$scope.user.push({
+				        name: $scope.username
+				    });
+					// turns out angular populates hashkey values into the arrays. so we erase those
+				    var data = angular.toJson($scope.user);
+				        
+				    // We post the data to the json
+					$http({
+				    	url: '/user',
+				    	method: "POST",
+				    	data: data, 
+				    	header: { 'Content-Type': 'application/json' }
+					});
+
+					$window.location.href = '/shop.html';
 	}
 });
 
+/*
+														LogOut Conroller
+				-------------------------------------------------------------------------------------------------------------------------------------
+				-------------------------------------------------------------------------------------------------------------------------------------
+*/
+appGame.controller('logoutController', function($scope, $http, globalVars, $window, $http) {
+    $scope.logout = function(){
+    			    // grab the user data
+					//$scope.data = globalVars.getUserData();
+					// create something to store username
+					$scope.user = [] ;
+					
+					// turns out angular populates hashkey values into the arrays. so we erase those
+				    var data = angular.toJson($scope.user);
+				        
+				    // We post the data to the json
+					$http({
+				    	url: '/user',
+				    	method: "POST",
+				    	data: data, 
+				    	header: { 'Content-Type': 'application/json' }
+					});
 
+					$window.location.href = '/';
+	}
+});
+
+/*
+														Set User Information
+				-------------------------------------------------------------------------------------------------------------------------------------
+				-------------------------------------------------------------------------------------------------------------------------------------
+*/
+appGame.controller('setUserInfoController', function($scope, $http, globalVars) {
+	    $http.get('/public/app/user.json').
+	        then(function(response) {
+	        	//grab the response data
+	            $scope.userData = response.data;
+	            //set ur user information
+	            globalVars.setUserData($scope.userData);
+	        });   
+		});
+
+
+/*
+														Set Item Information
+				-------------------------------------------------------------------------------------------------------------------------------------
+				-------------------------------------------------------------------------------------------------------------------------------------
+*/
+appGame.controller('setItemInfoController', function($scope, $http, globalVars) {
+		// itemWidth is the size of the image on default. When the user mouse overs, it increases
+		$scope.itemWidth = '100px';
+		// itemHeight is the size of the image on default, when the user mouse overs it increases
+		$scope.itemHeight = '100px';
+		// filter is the current filter set
+		$scope.filter = [];
+		// the background colors for our filter menu
+		$scope.foodColor = 'white';
+		$scope.bookColor = 'white';
+		$scope.cleanColor = 'white';
+		$scope.electronicColor = 'white';
+		$scope.kitchenColor = 'white';
+		// we determine what the user is viewing here, main page = 0, item page = 1
+		$scope.location = 0;
+		// when we view an items page we need to know what item we are viewing
+		$scope.currItem = "";
+		// When we click on a filter, we want to add it to our filter list
+		$scope.addItem = function(itemToAdd, colorToChange){
+				
+					// for each item type, we set our background color and add to our filter array
+					if (itemToAdd == "Food"){
+			    		if ($scope.foodColor == 'red'){
+			    			$scope.foodColor = 'white';
+			    			for(var i = 0 ; i < $scope.filter.length; i++){
+							    if($scope.filter[i].hasOwnProperty('name') && $scope.filter[i].name === itemToAdd) {
+							     	$scope.filter.splice(i, 1)
+							    }
+							} 
+			    			
+			    		} else {
+
+			    			$scope.foodColor = 'red';
+			    			$scope.filter.push({
+						        name:itemToAdd
+						    });
+			    		}
+			    	} // food if
+			    	else if (itemToAdd == "Book"){
+			    		if ($scope.bookColor == 'red'){
+			    			$scope.bookColor = 'white';
+			    			for(var i = 0 ; i < $scope.filter.length; i++){
+							    if($scope.filter[i].hasOwnProperty('name') && $scope.filter[i].name === itemToAdd) {
+							     	$scope.filter.splice(i, 1)
+							    }
+							} 
+			    			
+			    		} else {
+
+			    			$scope.bookColor = 'red';
+			    			$scope.filter.push({
+						        name:itemToAdd
+						    });
+			    		}
+			    	} // book if
+			    	else if (itemToAdd == "Cleaning"){
+			    		if ($scope.cleanColor == 'red'){
+			    			$scope.cleanColor = 'white';
+			    			for(var i = 0 ; i < $scope.filter.length; i++){
+							    if($scope.filter[i].hasOwnProperty('name') && $scope.filter[i].name === itemToAdd) {
+							     	$scope.filter.splice(i, 1)
+							    }
+							} 
+			    			
+			    		} else {
+
+			    			$scope.cleanColor = 'red';
+			    			$scope.filter.push({
+						        name:itemToAdd
+						    });
+			    		}
+			    	} // Cleaning if
+			    	else if (itemToAdd == "Electronic"){
+			    		if ($scope.electronicColor == 'red'){
+			    			$scope.electronicColor = 'white';
+			    			for(var i = 0 ; i < $scope.filter.length; i++){
+							    if($scope.filter[i].hasOwnProperty('name') && $scope.filter[i].name === itemToAdd) {
+							     	$scope.filter.splice(i, 1)
+							    }
+							} 
+			    			
+			    		} else {
+
+			    			$scope.electronicColor = 'red';
+			    			$scope.filter.push({
+						        name:itemToAdd
+						    });
+			    		}
+			    	} // Electronic if
+			    	else if (itemToAdd == "Kitchen"){
+			    		if ($scope.kitchenColor == 'red'){
+			    			$scope.kitchenColor = 'white';
+			    			for(var i = 0 ; i < $scope.filter.length; i++){
+							    if($scope.filter[i].hasOwnProperty('name') && $scope.filter[i].name === itemToAdd) {
+							     	$scope.filter.splice(i, 1)
+							    }
+							} 
+			    			
+			    		} else {
+
+			    			$scope.kitchenColor = 'red';
+			    			$scope.filter.push({
+						        name:itemToAdd
+						    });
+			    		}
+			    	} // Kitchen if
+			    	
+		}
+
+		// we clear the filter
+		$scope.clearFilter = function(){
+			$scope.filter = [];
+			$scope.foodColor = 'white';
+			$scope.bookColor = 'white';
+			$scope.cleanColor = 'white';
+			$scope.electronicColor = 'white';
+			$scope.kitchenColor = 'white';
+		}
+		// We need to check when our filter is active what are we filtering by
+        $scope.hasValue = function(obj, key, value, i) {
+        	//alert(i);
+        	
+
+        	for(var i = 0 ; i < obj.length; i++){
+			    if(obj[i].hasOwnProperty(key) && obj[i].name === value) {
+
+			     	return true;
+			    }
+			} 
+
+
+		    return false;
+		}
+		// when the user clicks an item, we show the item details here
+		$scope.showItem = function(item){
+			$scope.location = 1; // item page
+			$scope.currItem = item; // our current item view
+		}
+		// this is how we got our item json data
+	    $http.get('/public/app/item.json').
+	        then(function(response) {
+	        	//grab the response data
+	            $scope.itemData = response.data.Items;
+	            //set ur user information
+	            globalVars.setItemData($scope.itemData);
+	            
+	        });   
+		});
+
+
+
+
+
+
+/*
+
+
+
+								XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
+*/
 // highscores controller grabs the http json response data and populates our factory highscore board variable
 appGame.controller('highscores', function($scope, $http, globalVars) {
     $http.get('/public/app/restfuls.json').

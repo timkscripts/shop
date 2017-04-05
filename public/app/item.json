@@ -1,0 +1,134 @@
+{
+	"Items":[ {		
+			"Name":"Apple",
+			"Description":"Delicious and Red",
+			"Category":"Food",
+			"CurrentStock":"3",
+			"MaxStock":"10",
+			"pCenter":"2" ,
+			"imageURL":"/public/app/images/apple.png",
+			"listCenters":     [
+							   {
+								"Name":"Wegmans",
+								"Current":"2",
+								"Max":"5",
+								"Contact":"716-111-1111",
+								"Location":"14227"
+							   },
+							   {
+								"Name":"Tops",
+								"Current":"1",
+								"Max":"5",
+								"Contact":"716-222-2222",
+								"Location":"14228"
+							   }
+							   ]
+		},
+		{		
+				"Name":"Game of Thrones",
+				"Description":"You win or you die",
+				"Category":"Book",
+				"CurrentStock":"6",
+				"MaxStock":"10",
+				"pCenter":"2" ,
+				"imageURL":"/public/app/images/Gameofthrones.jpg",
+				"listCenters": [
+							   {
+								"Name":"Barnes and Noble",
+								"Current":"3",
+								"Max":"5",
+								"Contact":"716-333-3333",
+								"Location":"14229"
+							   },
+							   {
+								"Name":"Amazon",
+								"Current":"3",
+								"Max":"5",
+								"Contact":"716-444-4444",
+								"Location":"14229"
+							   }
+							   ]
+		},
+		{		
+				"Name":"Febreze",
+				"Description":"Spring Fresh",
+				"Category":"Cleaning",
+				"CurrentStock":"4",
+				"MaxStock":"11",
+				"pCenter":"2" ,
+				"imageURL":"/public/app/images/febreze.jpg",
+				"listCenters": [
+							   {
+								"Name":"Tops",
+								"Current":"2",
+								"Max":"5",
+								"Contact":"716-222-2222",
+								"Location":"14228"
+							   },
+							   {
+								"Name":"Walmart",
+								"Current":"2",
+								"Max":"6",
+								"Contact":"716-888-8888",
+								"Location":"14227"
+							   }
+							   ]
+		},
+		{		
+				"Name":"Laptop",
+				"Description":"Fast Computer",
+				"Category":"Electronic",
+				"CurrentStock":"3",
+				"MaxStock":"6",
+				"pCenter":"2" ,
+				"imageURL":"/public/app/images/laptop.png",
+				"listCenters": [
+							   {
+								"Name":"Bestbuy",
+								"Current":"2",
+								"Max":"4",
+								"Contact":"716-777-7777",
+								"Location":"14225"
+							   },
+							   {
+								"Name":"Walmart",
+								"Current":"1",
+								"Max":"2",
+								"Contact":"716-888-8888",
+								"Location":"14227"
+							   }
+							   ]
+		},
+		{		
+				"Name":"Fridge",
+				"Description":"Lots of space to keep things cool",
+				"Category":"Kitchen",
+				"CurrentStock":"2",
+				"MaxStock":"4",
+				"pCenter":"2" ,
+				"imageURL":"/public/app/images/Fridge.png",
+				"listCenters": [
+							   {
+								"Name":"Home Depot",
+								"Current":"1",
+								"Max":"2",
+								"Contact":"716-999-9999",
+								"Location":"14223"
+							   },
+							   {
+								"Name":"Sears",
+								"Current":"1",
+								"Max":"2",
+								"Contact":"716-123-4567",
+								"Location":"14222"
+							   }
+							   ]
+		}
+
+
+
+
+
+	]
+
+}

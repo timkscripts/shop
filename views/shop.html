@@ -7,7 +7,26 @@
     background: gray;
     border: 3px solid #dddddd;
     height: 90%;
+    overflow: scroll;
 
+  }
+  .FilterTable{
+    margin: auto;
+    width: 60%;
+    position: relative;
+    background: #DDDDDD;
+  }
+  .itemImage{
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100px;
+    width: 100px;
+  }
+  .itemImage2:hover{
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 200px;
+    width: 200px;
   }
   #login {
     margin: auto;
@@ -22,8 +41,19 @@ body {
 .header {
     height: 100px;
     background-color: black;
+    color: white;
 }
-
+.whiteFont{
+  color: white;
+  padding-right: 20px;
+}
+.blueFont{
+  color: #aaaaff;
+  padding-right: 20px;
+}
+.blackFont{
+  padding-right: 20px;
+}
 .mainBody {
     background-color: white;
     position: absolute;
@@ -57,22 +87,129 @@ body {
                                                                               game app 
   -->
   <body ng-app="gameApp"  >
-
+  <!-- 
+                                                                              Header
+  -->
   <div class="header" >
-      &nbsp;
+            <!--user -->
+            <div ng-controller="setUserInfoController">
+                <table class="displayTable">
+                  <tbody>
+                    <tr class="tdScore">
+                       <td class="whiteFont"> Welcome user: </td>
+                     
+                    </tr>
+                    <tr ng-repeat="x in userData" class="trScore">
+                      
+                       <td class="whiteFont"> {{ x.name }} </td>
+                 
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div ng-controller="logoutController">
+                <button ng-click="logout()" >Logout</button>  
+              </div>
+              <!-- user -->
   </div>
+  <!-- 
+                                                                              Main Body 
+  -->
   <div class="mainBody">
       &nbsp;
       <div id="page">
-          <div id="login" ng-controller="loginController">
-            <h1>Login</h1>
-            <h2>Usernameasdfads:</h2>
-            <input>
-            <button go-click="/index2">Click me!</button>
-          </div>
-        
+         
+           <!--items -->
+
+
+
+            <div ng-controller="setItemInfoController">
+            <div ng-if="location == 0"> <!-- display main shop page -->
+             <table class="FilterTable">
+              <tbody>
+                <tr>
+                   <td> <div ng-click="addItem('Food')" ng-style="{'background':' '+foodColor+' '}">Food</div> </td>
+                   <td> <div ng-click="addItem('Book')" ng-style="{'background':' '+bookColor+' '}">Books</div> </td>
+                   <td> <div ng-click="addItem('Cleaning')" ng-style="{'background':' '+cleanColor+' '}">Cleaning Supplies</div> </td>
+                 
+                </tr>
+                <tr >
+                  
+                   <td> <div ng-click="addItem('Electronic')" ng-style="{'background':' '+electronicColor+' '}">Eletronics</div> </td>
+                   <td> <div ng-click="addItem('Kitchen')" ng-style="{'background':' '+kitchenColor+' '}">Kitchen Appliances</div> </td>
+                   <td> <div ng-click="clearFilter()" > Clear Filter</div> </td>
+             
+
+                </tr>
+              </tbody>
+            </table> <!-- End Table -->
+                
+                <table class="displayTable">
+                  <tbody>
+                    <tr>
+                        <td class="blackFont">&nbsp; </td>
+                        <td class="blackFont">Name </td>
+                        <td class="blackFont">Description </td>
+                        <td class="blackFont">Category </td>
+                        <td class="blackFont">CurrentStock </td>
+                        <td class="blackFont">Available in </td>
+                    </tr>
+                    <tr ng-repeat="x in itemData" class="trScore" ng-if="hasValue(filter, 'name', x.Category, $index) || (filter.length == 0)">
+
+                       <td class="itemImage" ng-if="x.imageURL" ng-style="{'background-image':'url('+x.imageURL+')' , 'width':itemWidth , 'height':itemHeight}" ng-mouseenter="itemHeight='200px';itemWidth='200px'" ng-mouseleave="itemHeight='100px';itemWidth='100px'">&nbsp;</td>
+                       <td class="itemImage" ng-if="! x.imageURL" >&nbsp; 1</td>
+                       <td class="blueFont" ng-click="showItem(x.Name)"> {{ x.Name }} </td>
+                       <td class="whiteFont"> {{ x.Description }} </td>
+                       <td class="whiteFont"> {{ x.Category }} </td>
+                       <td class="whiteFont"> {{ x.CurrentStock }}  /  {{ x.MaxStock }} </td>
+                       <td class="whiteFont"> {{ x.pCenter }} centers</td>
+                       
+                    </tr>
+                  </tbody>
+                </table> <!-- end table -->
+                </div> <!-- display main shop page -->
+                <div ng-if="location == 1"> <!-- display item page -->
+                  <table class="displayTable">
+                    <tbody>
+                      <tr>
+                          <td class="blackFont">&nbsp; </td>
+                          <td class="blackFont">Name </td>
+                          <td class="blackFont">Description </td>
+                          <td class="blackFont">Category </td>
+                          <td class="blackFont">CurrentStock </td>
+                          <td class="blackFont">Available in </td>
+                        
+                      </tr>
+                      <tr ng-repeat="x in itemData" class="trScore" ng-if="x.Name == currItem">
+
+                         <td class="itemImage" ng-if="x.imageURL" ng-style="{'background-image':'url('+x.imageURL+')' , 'width':itemWidth , 'height':itemHeight}" ng-mouseenter="itemHeight='200px';itemWidth='200px'" ng-mouseleave="itemHeight='100px';itemWidth='100px'">&nbsp;</td>
+                         <td class="itemImage" ng-if="! x.imageURL" >&nbsp; 1</td>
+                         <td class="blueFont"> {{ x.Name }} </td>
+                         <td class="whiteFont"> {{ x.Description }} </td>
+                         <td class="whiteFont"> {{ x.Category }} </td>
+                         <td class="whiteFont"> {{ x.CurrentStock }}  /  {{ x.MaxStock }} </td>
+                         <td class="whiteFont"> {{ x.pCenter }} centers</td>
+                    
+                         <td ng-repeat="y in itemData[$index].listCenters">
+                           <div class="blueFont"> {{ y.Name}}</div>
+                           <div class="whiteFont"> {{ y.Current }} / {{y.Max}}</div>
+                           <div class="whiteFont"> {{ y.Contact }} </div>
+                           <div class="whiteFont"> {{ y.Location }} </div>
+                         </td>
+                      </tr>
+                      
+                    </tbody>
+                  </table> <!-- end table -->
+                </div>
+              </div>
+              <!-- items -->
+          
       </div>
   </div>
+  <!-- 
+                                                                              Footer 
+  -->
   <div class="footer">
       &nbsp;
   </div>
