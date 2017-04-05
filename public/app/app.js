@@ -27,8 +27,11 @@ appGame.factory('globalVars', function(){
         userInput: 0,		//this is the keycode detected from the user
         leaderBoard: [],		//this is an object of .name and .score
         /* delete before this */
-        userData: [],
-        itemData: []
+        userData: [],	//Who are you logged in as
+        itemData: [],	//All json data related to all items
+        userCart: [],	//whats in your cart?
+        cartQty: 0,    	    // how many are in your cart
+        dummy: []
     };
 
 
@@ -74,6 +77,21 @@ appGame.factory('globalVars', function(){
         },
         setItemData: function (itemData) {
             data.itemData = itemData;
+        },
+        getUserCart: function () {
+            return data.userCart;
+        },
+        setUserCart: function (userCart) {
+            data.userCart = userCart;
+        },
+        getCartQty: function () {
+        	//alert(data.cartQty);
+            return data.cartQty;
+        },
+        setCartQty: function (CartQtys) {
+        	
+            data.cartQty = CartQtys;
+            
         }
     };
 
@@ -142,22 +160,63 @@ appGame.controller('logoutController', function($scope, $http, globalVars, $wind
 				-------------------------------------------------------------------------------------------------------------------------------------
 */
 appGame.controller('setUserInfoController', function($scope, $http, globalVars) {
+
 	    $http.get('/public/app/user.json').
 	        then(function(response) {
 	        	//grab the response data
 	            $scope.userData = response.data;
 	            //set ur user information
 	            globalVars.setUserData($scope.userData);
-	        });   
+	        });   // http get
+
+	       
+
+
+		}); // controller
+
+/*
+														Set Cart Information
+				-------------------------------------------------------------------------------------------------------------------------------------
+				-------------------------------------------------------------------------------------------------------------------------------------
+*/
+appGame.controller('setUserCartController', function($scope, $http, globalVars) {
+				// Keep track of the users cart QTY
+				$scope.qty = globalVars.getCartQty();
+	    		 
+				$http.get('/public/app/userCart.json').
+		        then(function(response) {
+		        	//grab the response data
+		            $scope.cartData = response.data;
+		            //set ur user information
+		            globalVars.setUserCart($scope.cartData);
+
+   				
+
+					
+		        });   // http get
+
+		       
+	            
 		});
 
+appGame.controller('setUserCartController2', function($scope, $http, globalVars) {
+				// Keep track of the users cart QTY
+				$scope.qty = globalVars.getCartQty();
+	    		 
 
+		       
+	            
+		});
 /*
 														Set Item Information
 				-------------------------------------------------------------------------------------------------------------------------------------
 				-------------------------------------------------------------------------------------------------------------------------------------
 */
-appGame.controller('setItemInfoController', function($scope, $http, globalVars) {
+appGame.controller('setItemInfoController', function($scope, $http, globalVars, $window) {
+		$scope.qty = globalVars.getCartQty();
+		//when we show the user their cart
+		$scope.currentCart = globalVars.getUserCart();
+		$scope.currentUser = globalVars.getUserData();
 		// itemWidth is the size of the image on default. When the user mouse overs, it increases
 		$scope.itemWidth = '100px';
 		// itemHeight is the size of the image on default, when the user mouse overs it increases
@@ -275,6 +334,13 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars) 
 			$scope.electronicColor = 'white';
 			$scope.kitchenColor = 'white';
 		}
+
+		// When the user clicks to view shop
+		$scope.showShop = function(){
+			$scope.location = 2; // shop page
+			$scope.currentCart = globalVars.getUserCart();
+			$scope.currentUser = globalVars.getUserData();
+		}
 		// We need to check when our filter is active what are we filtering by
         $scope.hasValue = function(obj, key, value, i) {
         	//alert(i);
@@ -295,6 +361,97 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars) 
 			$scope.location = 1; // item page
 			$scope.currItem = item; // our current item view
 		}
+		// when the user clicks to go back on the item page
+		$scope.goBack = function(item){
+			$scope.location = 0; // item page
+			
+		}
+
+		//When the user clicks add to cart
+		$scope.addCart = function(itemName, locationName, locationContact, locationAddress){
+					// grab our user data, to determine our user name
+					$scope.userDataReturn = globalVars.getUserData();
+					// when we add something to the cart, we tie it to the current user
+					$scope.userName = $scope.userDataReturn[0].name
+					//alert($scope.userName);
+			 		// grab tthe cart data
+					$scope.data = globalVars.getUserCart();
+					//alert($scope.data);
+					// set up our items in the cart
+					$scope.items = $scope.data ;
+					//alert($scope.data);
+
+					//We need a flag to know if this item is already in the cart
+					$scope.flagInCart = 0; //0 is no, 1 is yes
+					$scope.qty = 1; //if item exists, grab quantity
+					// check if cart data exists, if so add to QTY
+					for(var i = 0 ; i < $scope.items.length; i++){
+								    if  (  ($scope.items[i].uname == $scope.userName) && ($scope.items[i].laddress == locationAddress)  && ($scope.items[i].itemname == itemName) ) {
+								    	//alert("name already exists");
+								    	$scope.flagInCart = 1;
+								    	$scope.qty = $scope.items[i].qty + 1;
+								    	
+								    	$scope.items.splice(i, 1); //remove record from item to re-add with proper qty
+								    }
+								} 
+
+					// if our current cart is empty, we need to define a new array here
+					if ($scope.items.length < 1){
+						
+						$scope.items = [];
+					}
+
+					// push the user name and their score
+					$scope.items.push({
+								uname:$scope.userName,
+				        		itemname:itemName,
+						        lname:locationName,
+						        lcontact:locationContact,
+						        laddress:locationAddress,
+						        qty:$scope.qty,
+						        delivery:"pickup"
+
+				    });
+					
+					// update our local cart
+					globalVars.setUserCart($scope.items);
+
+					// turns out angular populates hashkey values into the arrays. so we erase those
+				    var data = angular.toJson($scope.items);
+
+
+			// globalVars.setUserCart($scope.items);
+        		$scope.cartData = globalVars.getUserCart();
+	           // grab our user data, to determine our user name
+				$scope.userDataReturn = globalVars.getUserData();
+				$scope.qty = 1;
+				// when we add something to the cart, we tie it to the current user
+				if ($scope.userDataReturn.length > 0){
+					$scope.userName = $scope.userDataReturn[0].name;
+					
+		            for(var i = 0 ; i < $scope.cartData.length; i++){
+						    if  (  ($scope.cartData[i].uname == $scope.userName) ) {
+						    	//$scope.qty = $scope.items[i].qty + 1;
+						    	
+						    	$scope.qty += $scope.cartData[i].qty;
+						    } // if
+					} // for
+				} // if
+				$scope.returnQty = [];
+				$scope.returnQty.push({qty:$scope.qty});
+				globalVars.setCartQty($scope.returnQty[0].qty);
+				
+
+				        
+				    // We post the data to the json
+					$http({
+				    	url: '/cart',
+				    	method: "POST",
+				    	data: data, 
+				    	header: { 'Content-Type': 'application/json' }
+					});
+		}
+
 		// this is how we got our item json data
 	    $http.get('/public/app/item.json').
 	        then(function(response) {
@@ -303,7 +460,72 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars) 
 	            //set ur user information
 	            globalVars.setItemData($scope.itemData);
 	            
-	        });   
+	        });
+
+
+
+	           globalVars.setCartQty($scope.qty);
+	           globalVars.setUserCart($scope.items);
+
+				// Keep track of the users cart QTY
+				$scope.qty = globalVars.getCartQty();
+	    		 
+				$http.get('/public/app/userCart.json').
+		        then(function(response) {
+		        	//grab the response data
+		            $scope.cartData = response.data;
+		            //set ur user information
+		            globalVars.setUserCart($scope.cartData);
+
+   				// globalVars.setUserCart($scope.items);
+        		$scope.cartData = globalVars.getUserCart();
+	           // grab our user data, to determine our user name
+				$scope.userDataReturn = globalVars.getUserData();
+				$scope.qty = 1;
+				// when we add something to the cart, we tie it to the current user
+				if ($scope.userDataReturn.length > 0){
+					$scope.userName = $scope.userDataReturn[0].name;
+					
+		            for(var i = 0 ; i < $scope.cartData.length; i++){
+						    if  (  ($scope.cartData[i].uname == $scope.userName) ) {
+						    	//$scope.qty = $scope.items[i].qty + 1;
+						    	
+						    	$scope.qty += $scope.cartData[i].qty;
+						    } // if
+					} // for
+				} // if
+				$scope.returnQty = [];
+				$scope.returnQty.push({qty:$scope.qty});
+				globalVars.setCartQty($scope.returnQty[0].qty);
+				
+
+					
+		        });   // http get
+	           	
+		        $scope.myFunction = function() {
+				    document.getElementById("myDropdown").classList.toggle("show");
+				}
+
+				// Close the dropdown menu if the user clicks outside of it
+				$window.onclick = function(event) {
+				  if (!event.target.matches('.dropbtn')) {
+
+				    var dropdowns = document.getElementsByClassName("dropdown-content");
+				    var i;
+				    for (i = 0; i < dropdowns.length; i++) {
+				      var openDropdown = dropdowns[i];
+				      if (openDropdown.classList.contains('show')) {
+				        openDropdown.classList.remove('show');
+				      }
+				    }
+				  }
+				} //$window
+
+				$scope.setDelivery = function(type, index){
+					
+					$scope.currentCart[index].delivery = type;
+				}
+					           //$scope.qty = globalVars.getCartQty();
 		});
 
 
@@ -320,17 +542,17 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars) 
 
 
 */
-// highscores controller grabs the http json response data and populates our factory highscore board variable
-appGame.controller('highscores', function($scope, $http, globalVars) {
-    $http.get('/public/app/restfuls.json').
-        then(function(response) {
-        	//grab the response data
-            $scope.board = response.data;
-            //set our leader board to the json received
-            globalVars.setLeaderBoard($scope.board);
-            //alert(globalVars.getLeaderBoard());
-        });   
-});
+	// highscores controller grabs the http json response data and populates our factory highscore board variable
+	appGame.controller('highscores', function($scope, $http, globalVars) {
+	    $http.get('/public/app/restfuls.json').
+	        then(function(response) {
+	        	//grab the response data
+	            $scope.board = response.data;
+	            //set our leader board to the json received
+	            globalVars.setLeaderBoard($scope.board);
+	            //alert(globalVars.getLeaderBoard());
+	        });   
+	});
 
 	// the test controller is used to test a variable
 	appGame

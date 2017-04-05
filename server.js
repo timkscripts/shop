@@ -111,7 +111,33 @@ function setUser(req, res) {
     console.log("yes2");
 }
 
-// register route URL
-app.post('/user', setUser);
+  // register route URL
+  app.post('/user', setUser);
 
 
+/*
+                                                            Post user cart
+        -------------------------------------------------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------------------------------------------------
+*/
+function setUCart(req, res) {
+
+    console.log(req.body);
+    // write to the json our value
+    fs.writeFile(__dirname+"/public/app/userCart.json", JSON.stringify(req.body), function(err) {
+     console.log("yeserr");
+     console.log(err);
+    }); 
+      
+    // respond JSON object
+    var _respond = {
+        'status': 200
+    };
+
+    // expressjs respond a JSON with status code 200
+    res.status(200).json(_respond);
+
+}
+
+  // register route URL
+  app.post('/cart', setUCart);

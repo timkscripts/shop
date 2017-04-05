@@ -75,6 +75,59 @@ body {
     bottom: 0;
     width:100%;
 }
+.floatRight{
+  float: right;
+}
+.floatLeft{
+  float:left;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
+
 </style>
   <head>
     <!-- load Angular into our HTML Page -->
@@ -92,7 +145,7 @@ body {
   -->
   <div class="header" >
             <!--user -->
-            <div ng-controller="setUserInfoController">
+            <div ng-controller="setUserInfoController" class="floatLeft">
                 <table class="displayTable">
                   <tbody>
                     <tr class="tdScore">
@@ -108,10 +161,22 @@ body {
                   </tbody>
                 </table>
               </div>
-              <div ng-controller="logoutController">
+              <div ng-controller="logoutController" class="floatLeft">
                 <button ng-click="logout()" >Logout</button>  
               </div>
               <!-- user -->
+               <!--cart -->
+
+              
+              <!-- cart -->
+               <!--cart -->
+            <div ng-controller="setUserCartController" class="floatRight">
+               &nbsp;
+
+                
+              </div>
+              
+              <!-- cart -->
   </div>
   <!-- 
                                                                               Main Body 
@@ -125,6 +190,7 @@ body {
 
 
             <div ng-controller="setItemInfoController">
+            <div class="userCartClass blueFont" ng-click="showShop()">Current Items in your cart : {{ qty }}</div>
             <div ng-if="location == 0"> <!-- display main shop page -->
              <table class="FilterTable">
               <tbody>
@@ -185,7 +251,7 @@ body {
 
                          <td class="itemImage" ng-if="x.imageURL" ng-style="{'background-image':'url('+x.imageURL+')' , 'width':itemWidth , 'height':itemHeight}" ng-mouseenter="itemHeight='200px';itemWidth='200px'" ng-mouseleave="itemHeight='100px';itemWidth='100px'">&nbsp;</td>
                          <td class="itemImage" ng-if="! x.imageURL" >&nbsp; 1</td>
-                         <td class="blueFont"> {{ x.Name }} </td>
+                         <td class="whiteFont"> {{ x.Name }} </td>
                          <td class="whiteFont"> {{ x.Description }} </td>
                          <td class="whiteFont"> {{ x.Category }} </td>
                          <td class="whiteFont"> {{ x.CurrentStock }}  /  {{ x.MaxStock }} </td>
@@ -196,12 +262,52 @@ body {
                            <div class="whiteFont"> {{ y.Current }} / {{y.Max}}</div>
                            <div class="whiteFont"> {{ y.Contact }} </div>
                            <div class="whiteFont"> {{ y.Location }} </div>
+                           <div class="whiteFont"> <button ng-click="addCart(x.Name, y.Name, y.Contact, y.Location)" >Add to Cart</button>   </div>
                          </td>
                       </tr>
                       
                     </tbody>
                   </table> <!-- end table -->
-                </div>
+                  <div>
+                     <br><br>
+                    <button ng-click="goBack()" >Go Back</button>  
+                  </div>
+                </div> <!-- if location == 2 -->
+                 <div ng-if="location == 2"> <!-- display item page -->
+                  <table class="displayTable">
+                    <tbody>
+                      <tr>
+                          <td class="blackFont">&nbsp; </td>
+                          <td class="blackFont">Name </td>
+                          <td class="blackFont">QTY </td>
+                          <td class="blackFont">Delivery </td>
+                          <td class="blackFont">&nbsp;</td>
+                          <td class="blackFont">&nbsp;</td>
+                        
+                      </tr>
+                      <tr ng-repeat="z in currentCart" class="trScore" >
+                        <td class="blackFont">&nbsp; </td>
+                        <td >{{currentCart[$index].itemname}}</td>
+                        <td >{{currentCart[$index].qty}}</td>
+
+                        <td>
+                        <div class="dropdown">
+                        <button ng-click="myFunction()" class="dropbtn">{{currentCart[$index].delivery}}</button>
+                       
+                          <a  class="blueFont" ng-click="setDelivery('pickup', $index)">Pickup</a>
+                          <a  class="blueFont" ng-click="setDelivery('delivery', $index)">Delivery</a>
+                       
+                      </div>
+                      </td>
+                      </tr>
+                      
+                    </tbody>
+                  </table> <!-- end table -->
+                  <div>
+                     <br><br>
+                    <button ng-click="goBack()" >Go Back</button>  
+                  </div>
+                </div> <!-- if location == 2 -->
               </div>
               <!-- items -->
           
