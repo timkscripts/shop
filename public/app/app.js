@@ -1,10 +1,5 @@
 /*
-	Game App
-	The funcion of this game app is to play the game Snake inside a webbrowser.
-	There are 3 controllers that are used. Display, input and game.
-	Game controller handles all of the game logic of snake. It takes input from the input controller through a factory. And the display data from the display controller.
-	The display controller just reads the screen data and outputs the graphics.
-	The input controller shows some values on keypress, keydown etc.. The main function is it captures the users key code and sends it to the fatory.
+	Shop
 */
 
 (function() {
@@ -21,12 +16,6 @@
 appGame.factory('globalVars', function(){
 
 	var data = {
-        FirstName: '', 		//test variable, not used
-        screen: [],			//this is a 2D array of our screen pixel values
-        gameState: 0,		//this variable determines where we are in any game
-        userInput: 0,		//this is the keycode detected from the user
-        leaderBoard: [],		//this is an object of .name and .score
-        /* delete before this */
         userData: [],	//Who are you logged in as
         itemData: [],	//All json data related to all items
         userCart: [],	//whats in your cart?
@@ -479,7 +468,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
         		$scope.cartData = globalVars.getUserCart();
 	           // grab our user data, to determine our user name
 				$scope.userDataReturn = globalVars.getUserData();
-				$scope.qty = 1;
+				$scope.qty = 0;
 				// when we add something to the cart, we tie it to the current user
 				if ($scope.userDataReturn.length > 0){
 					$scope.userName = $scope.userDataReturn[0].name;
@@ -528,6 +517,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
 	        });
 	        $scope.viewHistory = function(){
 	        	$scope.uHistory = globalVars.getUserHistory();
+	        	$scope.currentUser = globalVars.getUserData();
 	        	$scope.location = 3;
 
 	        }
@@ -554,7 +544,7 @@ appGame.controller('setItemInfoController', function($scope, $http, globalVars, 
         		$scope.cartData = globalVars.getUserCart();
 	           // grab our user data, to determine our user name
 				$scope.userDataReturn = globalVars.getUserData();
-				$scope.qty = 1;
+				$scope.qty = 0;
 				// when we add something to the cart, we tie it to the current user
 				if ($scope.userDataReturn.length > 0){
 					$scope.userName = $scope.userDataReturn[0].name;

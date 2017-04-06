@@ -356,10 +356,11 @@ function callback(results, status) {
                           <td class="blackFont">&nbsp;</td>
                         
                       </tr>
-                      <tr ng-repeat="z in currentCart" class="trScore" >
+                      <tr ng-repeat="z in currentCart" class="trScore" ng-if="currentCart[$index].uname == currentUser[0].name">
                         <td class="blackFont">&nbsp; </td>
                         <td >{{currentCart[$index].itemname}}</td>
                         <td >{{currentCart[$index].qty}}</td>
+                      
 
                         <td>
                         <div class="dropdown">
@@ -392,7 +393,7 @@ function callback(results, status) {
                          
                         
                       </tr>
-                      <tr ng-repeat="z in uHistory" class="trScore" >
+                      <tr ng-repeat="z in uHistory" class="trScore" ng-if="uHistory[$index].uname[0].name == currentUser[0].name">
                         <td class="blackFont"> &nbsp; </td>
                         <td ng-click="showItem(uHistory[$index].itemname, 0)" class="blueFont">{{uHistory[$index].itemname}}</td>
                         <td >{{uHistory[$index].time}}</td>
