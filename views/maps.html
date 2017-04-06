@@ -11,10 +11,9 @@
         height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
+      .size{
+        height: 200px;
+        width: 200px;
       }
     </style>
     <script>
@@ -25,28 +24,31 @@ var map;
 var service;
 var infowindow;
 
-function initialize() {
-  var pyrmont = new google.maps.LatLng(42.884933,-78.875458);
+
+function setupMap(placeName){
+   var pyrmont = new google.maps.LatLng(42.884933,-78.875458);
 
 
-
-
-
- 
 
   map = new google.maps.Map(document.getElementById('map'), {
       center: pyrmont,
-      zoom: 11
+      zoom: 9
     });
-
+  infowindow = new google.maps.InfoWindow();
   var request = {
     location: pyrmont,
     radius: '500',
-    query: 'wegmans'
+    query: placeName
   };
 
   service = new google.maps.places.PlacesService(map);
   service.textSearch(request, callback);
+}
+
+
+function initialize() {
+  setupMap("sears");
+  
 }
 
 function callback(results, status) {
@@ -66,14 +68,16 @@ function callback(results, status) {
         });
 
         google.maps.event.addListener(marker, 'click', function() {
-          infowindow.setContent(place);
+          infowindow.setContent(place.name + '<br>' + place.formatted_address);
           infowindow.open(map, this);
         });
       }
     </script>
   </head>
   <body>
-    <div id="map"></div>
+    <div class="size">
+      <div id="map"></div>
+    </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ja7vM-zxIpeHJb4cwCcHFQs4SMQzO24&libraries=places&callback=initialize" async defer></script>
   </body>
 </html>

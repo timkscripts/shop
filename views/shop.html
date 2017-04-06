@@ -135,6 +135,77 @@ body {
     <!-- load our Angular App in -->
     <script src="/public/app/app.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.js"></script>
+        <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      .size{
+        height: 300px;
+        width: 300px;
+      }
+    </style>
+    <script>
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+var map;
+var service;
+var infowindow;
+
+
+function setupMap(placeName){
+   var pyrmont = new google.maps.LatLng(42.884933,-78.875458);
+
+
+
+  map = new google.maps.Map(document.getElementById('map'), {
+      center: pyrmont,
+      zoom: 9
+    });
+
+  infowindow = new google.maps.InfoWindow();
+  var request = {
+    location: pyrmont,
+    radius: '500',
+    query: placeName
+  };
+
+  service = new google.maps.places.PlacesService(map);
+  service.textSearch(request, callback);
+
+}
+
+
+function initialize() {
+  setupMap("sears");
+  
+}
+
+function callback(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      var place = results[i];
+      createMarker(results[i]);
+    }
+  }
+}
+
+      function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.setContent(place.name + '<br>' + place.formatted_address);
+          infowindow.open(map, this);
+        });
+      }
+    </script>
   </head>
   <!-- 
                                                                               game app 
@@ -189,6 +260,7 @@ body {
             <div ng-controller="setItemInfoController">
             <div class="userCartClass blueFont" ng-click="showShop()">Current Items in your cart : {{ qty }}</div>
             <div class="userCartClass blueFont" ng-click="viewHistory()">View History</div>
+
             <div ng-if="location == 0"> <!-- display main shop page -->
              <table class="FilterTable">
               <tbody>
@@ -256,7 +328,7 @@ body {
                          <td class="whiteFont"> {{ x.pCenter }} centers</td>
                     
                          <td ng-repeat="y in itemData[$index].listCenters">
-                           <div class="blueFont"> {{ y.Name}}</div>
+                           <div class="blueFont"  ng-click="viewMap(y.Name)"> {{ y.Name}}</div>
                            <div class="whiteFont"> {{ y.Current }} / {{y.Max}}</div>
                            <div class="whiteFont"> {{ y.Contact }} </div>
                            <div class="whiteFont"> {{ y.Location }} </div>
@@ -333,7 +405,26 @@ body {
                     <button ng-click="goBack()" >Go Back</button>  
                   </div>
                 </div> 
-                <!-- if location == 2 -->
+                <!-- if location == 3 -->
+                 <!-- if location == 4 -->
+                 <div ng-hide="location != 4"> <!-- display item page -->
+                  <div class="size">
+                    <div id="map"></div>
+                  </div>
+                  <script ng-if="location == 4" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Ja7vM-zxIpeHJb4cwCcHFQs4SMQzO24&libraries=places&callback=initialize" async defer></script>
+                  <button ng-click="goBack()" >Go Back</button> 
+                  <button ng-if="mapPlace == 'Wegmans'" onClick="setupMap('Wegmans')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Tops'" onClick="setupMap('Tops')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Barnes and Noble'" onClick="setupMap('Barnes and Noble')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Amazon'" onClick="setupMap('Amazon')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Walmart'" onClick="setupMap('Walmart')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Bestbuy'" onClick="setupMap('Bestbuy')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Home Depot'" onClick="setupMap('Home Depot')" >refresh</button> 
+                  <button ng-if="mapPlace == 'Sears'" onClick="setupMap('Sears')" >refresh</button> 
+                 
+
+                </div> 
+                <!-- if location == 4 -->
               </div>
               <!-- items -->
           
